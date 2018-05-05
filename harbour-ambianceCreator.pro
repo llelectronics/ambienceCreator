@@ -14,7 +14,9 @@ TARGET = harbour-ambianceCreator
 
 CONFIG += sailfishapp
 
-SOURCES += src/harbour-ambianceCreator.cpp
+SOURCES += src/harbour-ambianceCreator.cpp \
+    src/folderlistmodel/fileinfothread.cpp \
+    src/folderlistmodel/qquickfolderlistmodel.cpp
 
 DISTFILES += qml/harbour-ambianceCreator.qml \
     qml/cover/CoverPage.qml \
@@ -26,7 +28,11 @@ DISTFILES += qml/harbour-ambianceCreator.qml \
     rpm/harbour-ambianceCreator.yaml \
     translations/*.ts \
     harbour-ambianceCreator.desktop \
-    qml/pages/AboutPage.qml
+    qml/pages/AboutPage.qml \
+    qml/pages/OpenDialog.qml \
+    qml/pages/img/ambience-template.png \
+    qml/pages/Components/Wallpaper.qml \
+    qml/pages/ColorChooser.qml
 
 SAILFISHAPP_ICONS = 86x86 108x108 128x128 256x256
 
@@ -39,3 +45,9 @@ CONFIG += sailfishapp_i18n
 # following TRANSLATIONS line. And also do not forget to
 # modify the localized app name in the the .desktop file.
 TRANSLATIONS += translations/harbour-ambianceCreator-de.ts
+
+HEADERS += \
+    src/fmhelper.hpp \
+    src/folderlistmodel/fileinfothread_p.h \
+    src/folderlistmodel/fileproperty_p.h \
+    src/folderlistmodel/qquickfolderlistmodel.h

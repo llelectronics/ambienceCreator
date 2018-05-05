@@ -35,7 +35,7 @@ Page {
 
             }
             Label {
-                text: "License: AGPL (v3)"
+                text: "License: AGPL (v3) (Components/Wallpaper.qml BSD)"
                 anchors.horizontalCenter: parent.horizontalCenter
             }
             Rectangle{

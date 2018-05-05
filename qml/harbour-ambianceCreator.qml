@@ -35,11 +35,15 @@ import "pages"
 ApplicationWindow
 {
     id: mainWindow
+
+    // Private
     property string version: "0.1"
     property string appname: "Ambience Creator"
     property string appicon: "qrc:/harbour-ambienceCreator.png"
 
+    // Public
     property int orient: Orientation.All
+    property var imageFilter: ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.webp", "*.bmp", "*.tif", "*.tiff", "*.jpe", "*.pnn","*.tga"]
 
     initialPage: Component { FirstPage { } }
     cover: Qt.resolvedUrl("cover/CoverPage.qml")

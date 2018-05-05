@@ -34,6 +34,14 @@
 
 #include <sailfishapp.h>
 
+#include <QQuickView>
+#include <QQmlEngine>
+#include <QQmlContext>
+#include <QGuiApplication>
+
+#include "fmhelper.hpp"
+#include "folderlistmodel/qquickfolderlistmodel.h"
+
 
 int main(int argc, char *argv[])
 {
@@ -47,5 +55,16 @@ int main(int argc, char *argv[])
     //
     // To display the view, call "show()" (will show fullscreen on device).
 
-    return SailfishApp::main(argc, argv);
+    QGuiApplication *app = SailfishApp::application(argc, argv);
+
+    qmlRegisterType<QQuickFolderListModel>("harbour.ambienceCreator.AmbienceCreator", 1, 0, "FolderListModel");
+
+    QQuickView *view = SailfishApp::createView(); // I get a white background with this.
+    FM *fileAction = new FM();
+    view->engine()->rootContext()->setContextProperty("_fm", fileAction);
+    view->setSource(SailfishApp::pathTo("qml/harbour-ambianceCreator.qml"));  // So I do this ;)
+
+    view->show();
+
+    return app->exec();
 }

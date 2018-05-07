@@ -5,6 +5,8 @@ Item {
     width: 200
     height: 200
 
+    property alias _wheelArea: wheelArea
+
     property real hue : 1
     property real saturation : 1
 

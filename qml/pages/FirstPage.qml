@@ -101,7 +101,10 @@ Page {
                 onClicked: {
                     // Open Color Page with selected color as highlight
                     console.log("Open Highlight Color Chooser")
-                    pageStack.push(Qt.resolvedUrl("ColorChooser.qml"))
+                    var dialog = pageStack.push(Qt.resolvedUrl("ColorChooser.qml"))
+                    dialog.accepted.connect(function() {
+                        highlightColor = dialog.currentColor
+                    })
                 }
 
                 Wallpaper {

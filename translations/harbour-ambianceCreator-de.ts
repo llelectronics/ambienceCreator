@@ -9,6 +9,13 @@
     </message>
 </context>
 <context>
+    <name>ColorChooser</name>
+    <message>
+        <source>Choose Highlight Color</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CoverPage</name>
     <message>
         <source>My Cover</source>

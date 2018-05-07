@@ -32,7 +32,15 @@ DISTFILES += qml/harbour-ambianceCreator.qml \
     qml/pages/OpenDialog.qml \
     qml/pages/img/ambience-template.png \
     qml/pages/Components/Wallpaper.qml \
-    qml/pages/ColorChooser.qml
+    qml/pages/ColorChooser.qml \
+    qml/pages/Components/ColorWheel/content/ColorUtils.js \
+    qml/pages/Components/ColorWheel/content/mathUtils.js \
+    qml/pages/Components/ColorWheel/content/CheckerBoard.qml \
+    qml/pages/Components/ColorWheel/content/NumberBox.qml \
+    qml/pages/Components/ColorWheel/content/PanelBorder.qml \
+    qml/pages/Components/ColorWheel/content/VerticalSlider.qml \
+    qml/pages/Components/ColorWheel/content/Wheel.qml \
+    qml/pages/Components/ColorWheel/ColorWheel.qml
 
 SAILFISHAPP_ICONS = 86x86 108x108 128x128 256x256
 

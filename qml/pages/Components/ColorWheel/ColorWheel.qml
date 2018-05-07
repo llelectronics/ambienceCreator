@@ -1,15 +1,16 @@
 import QtQuick 2.2
 import QtQuick.Window 2.0
 import Sailfish.Silica 1.0
-import QtQuick.Layouts 1.1
 import "content"
 import "content/ColorUtils.js" as ColorUtils
 
 Item {
     id: root
-    width: 600
-    height: 400
     focus: true
+
+    signal wheelAreaPressed
+    signal wheelAreaReleased
+    signal colorSelected(color col)
 
     // Color value in RGBA with floating point values between 0.0 and 1.0.
 
@@ -27,100 +28,20 @@ Item {
     }
 
     Column {
-        spacing: 20
-        anchors.fill: parent
+        spacing: Theme.paddingLarge
+        width: parent.width
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.leftMargin: Theme.paddingLarge
+        anchors.rightMargin: Theme.paddingLarge
+        anchors.topMargin: Theme.paddingLarge
 
-        Wheel {
-            id: wheel
-            width: parent.width - (2 * Theme.paddingLarge) - Theme.itemSizeExtraLarge
-            hue: colorHSVA.x
-            saturation: colorHSVA.y
-            onUpdateHS: {
-                colorHSVA = Qt.vector4d(hueSignal,saturationSignal, colorHSVA.z, colorHSVA.w)
-            }
-            onAccepted: {
-                root.accepted()
-            }
-        }
 
-        // brightness picker slider
-        Item {
-            width: Theme.itemSizeExtraLarge
-
-            //Brightness background
-            Rectangle {
-                anchors.fill: parent
-                gradient: Gradient {
-                    GradientStop {
-                        id: brightnessBeginColor
-                        position: 0.0
-                        color: {
-                            var rgba = ColorUtils.hsva2rgba(
-                                        Qt.vector4d(colorHSVA.x,
-                                                    colorHSVA.y, 1, 1))
-                            return Qt.rgba(rgba.x, rgba.y, rgba.z, rgba.w)
-                        }
-                    }
-                    GradientStop {
-                        position: 1.0
-                        color: "#000000"
-                    }
-                }
-            }
-
-            VerticalSlider {
-                id: brigthnessSlider
-                anchors.fill: parent
-                value: colorHSVA.z
-                onValueChanged: {
-                    colorHSVA = Qt.vector4d(colorHSVA.x, colorHSVA.y, value, colorHSVA.w)
-                }
-                onAccepted: {
-                    root.accepted()
-                }
-            }
-        }
-
-        // Alpha picker slider
-//        Item {
-//            Layout.fillHeight: true
-//            Layout.minimumWidth: 20
-//            Layout.minimumHeight: 200
-//            CheckerBoard {
-//                cellSide: 4
-//            }
-//            //  alpha intensity gradient background
-//            Rectangle {
-//                anchors.fill: parent
-//                gradient: Gradient {
-//                    GradientStop {
-//                        position: 0.0
-//                        color: Qt.rgba(m.colorRGBA.x, m.colorRGBA.y, m.colorRGBA.z, 1)
-//                    }
-//                    GradientStop {
-//                        position: 1.0
-//                        color: "#00000000"
-//                    }
-//                }
-//            }
-//            VerticalSlider {
-//                id: alphaSlider
-//                value: colorHSVA.w
-//                anchors.fill: parent
-//                onValueChanged: {
-//                    colorHSVA.w = value
-//                }
-//                onAccepted: {
-//                    root.accepted()
-//                }
-//            }
-//        }
-
-        // text inputs
-        Column {
+        // current color value
+        Row {
             width:parent.width
-            anchors.verticalCenter: parent.verticalCenter
-            spacing: 10
+            height: Theme.itemSizeMedium
+            spacing: Theme.paddingMedium
 
             // current color display
             Rectangle {
@@ -136,171 +57,118 @@ Item {
                     border.width: 1
                     border.color: "black"
                     color: Qt.rgba(m.colorRGBA.x, m.colorRGBA.y, m.colorRGBA.z)
+                    onColorChanged: colorSelected(color)
                     opacity: m.colorRGBA.w
                 }
             }
-
-
-            // current color value
             Item {
-                Layout.minimumWidth: 120
-                Layout.minimumHeight: 25
-
-                Text {
+                height: parent.height
+                width: parent.width
+                anchors.verticalCenter: parent.verticalCenter
+                Label {
                     id: captionBox
                     text: "#"
-                    width: 18
                     height: parent.height
-                    color: "#AAAAAA"
-                    font.pixelSize: 16
                     font.bold: true
+                    anchors.verticalCenter: currentColor.verticalCenter
                 }
-                PanelBorder {
+                TextField {
+                    id: currentColor
+                    font.capitalization: "AllUppercase"
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.left: captionBox.right
+                    anchors.leftMargin: 2
                     height: parent.height
-                    anchors.left : captionBox.right
                     width: parent.width - captionBox.width
-                    TextInput {
-                        id: currentColor
-                        color: "#AAAAAA"
-                        selectionColor: "#FF7777AA"
-                        font.pixelSize: 20
-                        font.capitalization: "AllUppercase"
-                        maximumLength: 9
-                        focus: true
-                        text: ColorUtils.hexaFromRGBA(m.colorRGBA.x, m.colorRGBA.y,
-                                                      m.colorRGBA.z, m.colorRGBA.w)
-                        font.family: "TlwgTypewriter"
-                        selectByMouse: true
-                        validator: RegExpValidator {
-                            regExp: /^([A-Fa-f0-9]{6})$/
-                        }
-                        onEditingFinished: {
-                            var colorTmp = Qt.vector4d( parseInt(text.substr(0, 2), 16) / 255,
-                                                    parseInt(text.substr(2, 2), 16) / 255,
-                                                    parseInt(text.substr(4, 2), 16) / 255,
-                                                    colorHSVA.w) ;
-                            colorHSVA = ColorUtils.rgba2hsva(colorTmp)
-                        }
+                    maximumLength: 9
+                    focus: true
+                    background: null
+                    text: ColorUtils.hexaFromRGBA(m.colorRGBA.x, m.colorRGBA.y,
+                                                  m.colorRGBA.z, m.colorRGBA.w)
+                    validator: RegExpValidator {
+                        regExp: /^([A-Fa-f0-9]{6})$/
+                    }
+                    Keys.onReturnPressed: {
+                        var colorTmp = Qt.vector4d( parseInt(text.substr(0, 2), 16) / 255,
+                                                   parseInt(text.substr(2, 2), 16) / 255,
+                                                   parseInt(text.substr(4, 2), 16) / 255,
+                                                   colorHSVA.w) ;
+                        colorHSVA = ColorUtils.rgba2hsva(colorTmp)
                     }
                 }
             }
-            // H, S, B color value boxes
-            Column {
-                width: Theme.iconSizeLarge
-                height: Theme.itemSizeMedium
-                NumberBox {
-                    id: hue
-                    caption: "H"
-                    // TODO: put in NumberBox
-                    value: Math.round(colorHSVA.x * 100000) / 100000 // 5 Decimals
-                    decimals: 2
-                    max: 1
-                    min: 0
-                    onAccepted: {
-                        colorHSVA =  Qt.vector4d(boxValue, colorHSVA.y, colorHSVA.z, colorHSVA.w)
-                        root.accepted()
-                    }
+        }
+
+
+        Row {
+            width: parent.width
+            height: wheel.height
+            spacing: Theme.paddingLarge * 2
+
+            Wheel {
+                id: wheel
+                width: parent.width - (2 * Theme.paddingLarge) - Theme.itemSizeHuge
+                height: width
+                hue: colorHSVA.x
+                saturation: colorHSVA.y
+                onUpdateHS: {
+                    colorHSVA = Qt.vector4d(hueSignal,saturationSignal, colorHSVA.z, colorHSVA.w)
                 }
-                NumberBox {
-                    id: sat
-                    caption: "S"
-                    value: Math.round(colorHSVA.y * 100) / 100 // 2 Decimals
-                    decimals: 2
-                    max: 1
-                    min: 0
-                    onAccepted: {
-                        colorHSVA = Qt.vector4d(colorHSVA.x, boxValue, colorHSVA.z, colorHSVA.w)
-                        root.accepted()
-                    }
+                onAccepted: {
+                    root.accepted()
                 }
-                NumberBox {
-                    id: brightness
-                    caption: "B"
-                    value: Math.round(colorHSVA.z * 100) / 100 // 2 Decimals
-                    decimals: 2
-                    max: 1
-                    min: 0
-                    onAccepted: {
-                        colorHSVA = Qt.vector4d(colorHSVA.x, colorHSVA.y, boxValue, colorHSVA.w)
-                        root.accepted()
-                    }
+                _wheelArea.onPressed: {
+                    wheelAreaPressed();
                 }
-                NumberBox {
-                    id: hsbAlpha
-                    caption: "A"
-                    value: Math.round(colorHSVA.w * 100) / 100 // 2 Decimals
-                    decimals: 2
-                    max: 1
-                    min: 0
-                    onAccepted: {
-                        colorHSVA.w = boxValue
-                        root.accepted()
-                    }
+                _wheelArea.onReleased: {
+                    wheelAreaReleased();
+                }
+                _wheelArea.onCanceled: {
+                    wheelAreaReleased();
                 }
             }
 
-            // R, G, B color values boxes
-            Column {
-                width: Theme.iconSizeLarge
-                height: Theme.itemSizeMedium
-                NumberBox {
-                    id: red
-                    caption: "R"
-                    value: Math.round(m.colorRGBA.x * 255)
-                    min: 0
-                    max: 255
-                    decimals: 0
-                    onAccepted: {
-                        var colorTmp = Qt.vector4d( boxValue / 255,
-                                                    m.colorRGBA.y,
-                                                    m.colorRGBA.z,
-                                                    colorHSVA.w) ;
-                        colorHSVA = ColorUtils.rgba2hsva(colorTmp)
-                        root.accepted()
+            // brightness picker slider
+            Item {
+                width: Theme.itemSizeLarge
+                height: wheel.height
+
+                //Brightness background
+                Rectangle {
+                    anchors.fill: parent
+                    gradient: Gradient {
+                        GradientStop {
+                            id: brightnessBeginColor
+                            position: 0.0
+                            color: {
+                                var rgba = ColorUtils.hsva2rgba(
+                                            Qt.vector4d(colorHSVA.x,
+                                                        colorHSVA.y, 1, 1))
+                                return Qt.rgba(rgba.x, rgba.y, rgba.z, rgba.w)
+                            }
+                        }
+                        GradientStop {
+                            position: 1.0
+                            color: "#000000"
+                        }
                     }
                 }
-                NumberBox {
-                    id: green
-                    caption: "G"
-                    value: Math.round(m.colorRGBA.y * 255)
-                    min: 0
-                    max: 255
-                    decimals: 0
+
+                VerticalSlider {
+                    id: brigthnessSlider
+                    anchors.fill: parent
+                    value: colorHSVA.z
+                    onValueChanged: {
+                        colorHSVA = Qt.vector4d(colorHSVA.x, colorHSVA.y, value, colorHSVA.w)
+                    }
                     onAccepted: {
-                        var colorTmp = Qt.vector4d( m.colorRGBA.x,
-                                                    boxValue / 255,
-                                                    m.colorRGBA.z,
-                                                    colorHSVA.w) ;
-                        colorHSVA = ColorUtils.rgba2hsva(colorTmp)
                         root.accepted()
                     }
-                }
-                NumberBox {
-                    id: blue
-                    caption: "B"
-                    value: Math.round(m.colorRGBA.z * 255)
-                    min: 0
-                    max: 255
-                    decimals: 0
-                    onAccepted: {
-                        var colorTmp = Qt.vector4d( m.colorRGBA.x,
-                                                    m.colorRGBA.y,
-                                                    boxValue / 255,
-                                                    colorHSVA.w) ;
-                        colorHSVA = ColorUtils.rgba2hsva(colorTmp)
-                        root.accepted()
-                    }
-                }
-                NumberBox {
-                    id: rgbAlpha
-                    caption: "A"
-                    value: Math.round(m.colorRGBA.w * 255)
-                    min: 0
-                    max: 255
-                    decimals: 0
-                    onAccepted: {
-                        root.colorHSVA.w = boxValue / 255
-                        root.accepted()
+                    onStateChanged: {
+                        if (state == "editing") {
+                            wheelAreaPressed();
+                        }
+                        else wheelAreaReleased();
                     }
                 }
             }

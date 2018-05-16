@@ -44,8 +44,11 @@ ApplicationWindow
     // Public
     property int orient: Orientation.All
     property var imageFilter: ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.webp", "*.bmp", "*.tif", "*.tiff", "*.jpe", "*.pnn","*.tga"]
+    property var audioFilter: ["*.mp3", "*.ogg", "*.oga", "*.flac", "*.wav", "*.m4a", "*.wma", "*.opus"]
 
-    initialPage: Component { FirstPage { } }
+    property QtObject firstPage
+
+    initialPage: Component { FirstPage { Component.onCompleted: { firstPage = this } } }
     cover: Qt.resolvedUrl("cover/CoverPage.qml")
     allowedOrientations: defaultAllowedOrientations
 }

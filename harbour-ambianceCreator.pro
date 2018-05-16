@@ -40,7 +40,8 @@ DISTFILES += qml/harbour-ambianceCreator.qml \
     qml/pages/Components/ColorWheel/content/PanelBorder.qml \
     qml/pages/Components/ColorWheel/content/VerticalSlider.qml \
     qml/pages/Components/ColorWheel/content/Wheel.qml \
-    qml/pages/Components/ColorWheel/ColorWheel.qml
+    qml/pages/Components/ColorWheel/ColorWheel.qml \
+    qml/pages/Components/SoundActionDialog.qml
 
 SAILFISHAPP_ICONS = 86x86 108x108 128x128 256x256
 

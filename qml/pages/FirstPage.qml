@@ -41,6 +41,14 @@ Page {
     property string highlightColor: Theme.highlightColor
     property string _originalHighlightColor: Theme.secondaryHighlightColor
 
+    // Sound Actions
+    property string ringerTone
+    property string messageTone
+    property string chatTone
+    property string mailTone
+    property string calendarTone
+    property string clockAlarmTone
+
     // The effective value will be restricted by ApplicationWindow.allowedOrientations
     allowedOrientations: mainWindow.orient
 
@@ -88,7 +96,13 @@ Page {
                     direction: OpacityRamp.BottomToTop
                     sourceItem: image
                 }
-                onClicked: pageStack.push(openFileComponent);
+                onClicked: {
+                    var opendialog = pageStack.push(Qt.resolvedUrl("OpenDialog.qml"), {path: StandardPaths.pictures, filter: mainWindow.imageFilter});
+                    opendialog.openFile.connect(function(path) {
+                        wallpaperUrl = path;
+                        pageStack.pop(page);
+                    })
+                }
             }
             MouseArea {
                 id: highlightColorSelect
@@ -207,16 +221,55 @@ Page {
                 }
 
             }
-        }
-    }
-    Component {
-        id: openFileComponent
-        OpenDialog {
-            path: StandardPaths.pictures
-            filter: mainWindow.imageFilter
-            onOpenFile: {
-                wallpaperUrl = path;
-                pageStack.pop(page);
+            Rectangle {
+                width: parent.width
+                height: Theme.paddingLarge
+                color: "transparent"
+            }
+
+            TextField {
+                id: ambienceName
+                width: parent.width
+                height: Theme.itemSizeMedium
+                label: qsTr("Ambience Name")
+                placeholderText: label
+            }
+
+            Slider {
+                id: volumeSlider
+                label: qsTr("Ringtone volume")
+                width: parent.width
+                height: Theme.itemSizeMedium
+                stepSize: 2
+                minimumValue: 0
+                maximumValue: 100
+                value: 80
+                valueText: value + "%"
+            }
+            SectionHeader {
+                text: qsTr("Actions")
+            }
+            Label {
+                width: parent.width
+                anchors {
+                    left: parent.left
+                    right: parent.right
+                    margins: Theme.horizontalPageMargin
+                }
+                font.pixelSize: Theme.fontSizeExtraSmall
+                wrapMode: Text.Wrap
+                color: Theme.highlightColor
+                text: qsTr("You can define a set of actions to trigger when this ambience is selected")
+            }
+            ValueButton {
+                id: toneEditor
+                width: parent.width
+                label: qsTr("Add Action")
+                value: qsTr("Tone Action")
+
+                rightMargin: Theme.horizontalPageMargin + Theme.itemSizeSmall + Theme.paddingMedium
+
+                onClicked: pageStack.push(Qt.resolvedUrl("Components/SoundActionDialog.qml"))
             }
         }
     }

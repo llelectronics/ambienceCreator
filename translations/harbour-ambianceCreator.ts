@@ -38,6 +38,30 @@
         <extracomment>Text to indicate color changes</extracomment>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Ringtone volume</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ambience Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Actions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can define a set of actions to trigger when this ambience is selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Action</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tone Action</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>OpenDialog</name>
@@ -102,6 +126,37 @@
     </message>
     <message>
         <source>Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SoundActionDialog</name>
+    <message>
+        <source>Choose Soundaction</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Ringtone</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mail</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Calendar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alarm</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

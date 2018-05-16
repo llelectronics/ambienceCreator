@@ -51,5 +51,12 @@ ApplicationWindow
     initialPage: Component { FirstPage { Component.onCompleted: { firstPage = this } } }
     cover: Qt.resolvedUrl("cover/CoverPage.qml")
     allowedOrientations: defaultAllowedOrientations
+
+    function findBaseName(url) {
+        url = url.toString();
+        var fileName = url.substring(url.lastIndexOf('/') + 1);
+        var dot = fileName.lastIndexOf('.');
+        return dot == -1 ? fileName : fileName.substring(0, dot);
+    }
 }
 

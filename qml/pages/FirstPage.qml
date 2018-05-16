@@ -42,12 +42,12 @@ Page {
     property string _originalHighlightColor: Theme.secondaryHighlightColor
 
     // Sound Actions
-    property string ringerTone
-    property string messageTone
-    property string chatTone
-    property string mailTone
-    property string calendarTone
-    property string clockAlarmTone
+    property string ringerTone: soundActionList.getPath("ringerTone")
+    property string messageTone: soundActionList.getPath("messageTone")
+    property string chatTone: soundActionList.getPath("chatTone")
+    property string mailTone: soundActionList.getPath("mailTone")
+    property string calendarTone: soundActionList.getPath("calendarTone")
+    property string clockAlarmTone: soundActionList.getPath("clockAlarmTone")
 
     // The effective value will be restricted by ApplicationWindow.allowedOrientations
     allowedOrientations: mainWindow.orient
@@ -270,46 +270,63 @@ Page {
                 color: Theme.highlightColor
                 text: qsTr("You can define a set of actions to trigger when this ambience is selected")
             }
-            SilicaListView {
-                width: parent.width
-                height: model.count * Theme.itemSizeSmall + Theme.paddingMedium
-                model: ListModel {
-                    id: soundActionList
-                    ListElement {
-                        lbl: qsTr("Ringtone")
-                        ident: "ringerTone"
-                        path: ""
-                    }
-                    ListElement {
-                        lbl: qsTr("Message")
-                        ident: "messageTone"
-                        path: ""
-                    }
-                    ListElement {
-                        lbl: qsTr("Chat")
-                        ident: "chatTone"
-                        path: ""
-                    }
-                    ListElement {
-                        lbl: qsTr("Mail")
-                        ident: "mailTone"
-                        path: ""
-                    }
-                    ListElement {
-                        lbl: qsTr("Calendar")
-                        ident: "calendarTone"
-                        path: ""
-                    }
-                    ListElement {
-                        lbl: qsTr("Alarm")
-                        ident: "clockAlarmTone"
-                        path: ""
-                    }
+            ListModel {
+                id: soundActionList
+                ListElement {
+                    lbl: qsTr("Ringtone")
+                    ident: "ringerTone"
+                    path: ""
                 }
+                ListElement {
+                    lbl: qsTr("Message")
+                    ident: "messageTone"
+                    path: ""
+                }
+                ListElement {
+                    lbl: qsTr("Chat")
+                    ident: "chatTone"
+                    path: ""
+                }
+                ListElement {
+                    lbl: qsTr("Mail")
+                    ident: "mailTone"
+                    path: ""
+                }
+                ListElement {
+                    lbl: qsTr("Calendar")
+                    ident: "calendarTone"
+                    path: ""
+                }
+                ListElement {
+                    lbl: qsTr("Alarm")
+                    ident: "clockAlarmTone"
+                    path: ""
+                }
+                function getPath(ident) {
+                    for (var i=0; i<count; i++) {
+                        if (get(i).ident == ident)  { // type transformation is intended here
+                            return get(i).path;
+                        }
+                    }
+                    return "";
+                }
+            }
+            Repeater {
+                width: parent.width
+                height: model.count * Theme.itemSizeSmall
+                model: soundActionList
+                clip: true
                 delegate: ValueButton {
                     id: delegateBtn
                     label: lbl
-                    value: (path != "") ? path : qsTr("Select tone")
+                    value: (path != "") ? mainWindow.findBaseName(path) : qsTr("Select tone")
+                    onClicked: {
+                        var sounddialog = pageStack.push(Qt.resolvedUrl("OpenDialog.qml"), {path: StandardPaths.music, filter: mainWindow.audioFilter});
+                        sounddialog.openFile.connect(function(soundPath) {
+                            path = soundPath
+                            pageStack.pop(page)
+                        })
+                    }
                 }
             }
         }

@@ -2,6 +2,10 @@ import QtQuick 2.0
 import Sailfish.Silica 1.0
 
 Page {
+    id: root
+
+    signal soundActionClicked(string ident, string path)
+
     PageHeader {
         id: head
         title: qsTr("Choose Soundaction")
@@ -45,7 +49,13 @@ Page {
             width: parent.width
             contentHeight: Theme.itemSizeSmall
 
-            onClicked: console.log("clicked on: " + ident)
+            onClicked: {
+                console.log("clicked on: " + ident)
+                var opendialog = pageStack.push(Qt.resolvedUrl("../OpenDialog.qml"), {path: StandardPaths.music, filter: mainWindow.audioFilter});
+                opendialog.openFile.connect(function(path) {
+                    soundActionClicked(ident, path)
+                })
+            }
 
             Label {
                 text: label

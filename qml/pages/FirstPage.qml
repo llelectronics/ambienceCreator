@@ -60,7 +60,16 @@ Page {
         PullDownMenu {
             MenuItem {
                 text: qsTr("Create shareable RPM")
-                onClicked: pageStack.push(Qt.resolvedUrl("SecondPage.qml"))
+                onClicked: {
+                    pageStack.push(Qt.resolvedUrl("SecondPage.qml"))
+                    console.log("Wallpaper: " + wallpaperUrl);
+                    console.log("ringerTone: " + ringerTone);
+                    console.log("messageTone: " + messageTone);
+                    console.log("chatTone: " + chatTone);
+                    console.log("mailTone: " + mailTone);
+                    console.log("calendarTone: " + calendarTone);
+                    console.log("clockAlarmTone: " + clockAlarmTone);
+                }
             }
         }
 
@@ -261,15 +270,47 @@ Page {
                 color: Theme.highlightColor
                 text: qsTr("You can define a set of actions to trigger when this ambience is selected")
             }
-            ValueButton {
-                id: toneEditor
+            SilicaListView {
                 width: parent.width
-                label: qsTr("Add Action")
-                value: qsTr("Tone Action")
-
-                rightMargin: Theme.horizontalPageMargin + Theme.itemSizeSmall + Theme.paddingMedium
-
-                onClicked: pageStack.push(Qt.resolvedUrl("Components/SoundActionDialog.qml"))
+                height: model.count * Theme.itemSizeSmall + Theme.paddingMedium
+                model: ListModel {
+                    id: soundActionList
+                    ListElement {
+                        lbl: qsTr("Ringtone")
+                        ident: "ringerTone"
+                        path: ""
+                    }
+                    ListElement {
+                        lbl: qsTr("Message")
+                        ident: "messageTone"
+                        path: ""
+                    }
+                    ListElement {
+                        lbl: qsTr("Chat")
+                        ident: "chatTone"
+                        path: ""
+                    }
+                    ListElement {
+                        lbl: qsTr("Mail")
+                        ident: "mailTone"
+                        path: ""
+                    }
+                    ListElement {
+                        lbl: qsTr("Calendar")
+                        ident: "calendarTone"
+                        path: ""
+                    }
+                    ListElement {
+                        lbl: qsTr("Alarm")
+                        ident: "clockAlarmTone"
+                        path: ""
+                    }
+                }
+                delegate: ValueButton {
+                    id: delegateBtn
+                    label: lbl
+                    value: (path != "") ? path : qsTr("Select tone")
+                }
             }
         }
     }

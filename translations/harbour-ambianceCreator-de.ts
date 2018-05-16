@@ -55,11 +55,31 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add Action</source>
+        <source>Ringtone</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Tone Action</source>
+        <source>Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mail</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Calendar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Alarm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select tone</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

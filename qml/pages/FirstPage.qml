@@ -40,6 +40,9 @@ Page {
     property string wallpaperTemplate: "img/ambience-template.png"
     property string highlightColor: Theme.highlightColor
     property string _originalHighlightColor: Theme.secondaryHighlightColor
+    property string primaryColor: Theme.primaryColor
+    property string secondaryHightlightColor
+    property string secondaryColor: Theme.secondaryColor
 
     // Sound Actions
     property string ringerTone: soundActionList.getPath("ringerTone")
@@ -62,6 +65,8 @@ Page {
                 text: qsTr("Create shareable RPM")
                 onClicked: {
                     pageStack.push(Qt.resolvedUrl("SecondPage.qml"))
+                    console.log("highlightColor: " + highlightColor.toString());
+                    console.log("secondaryHighlightColor: " + secondaryHightlightColor.toString());
                     console.log("Wallpaper: " + wallpaperUrl);
                     console.log("ringerTone: " + ringerTone);
                     console.log("messageTone: " + messageTone);
@@ -127,6 +132,7 @@ Page {
                     var dialog = pageStack.push(Qt.resolvedUrl("ColorChooser.qml"))
                     dialog.accepted.connect(function() {
                         highlightColor = dialog.currentColor
+                        secondaryHightlightColor = dialog.secondaryHightlightColor
                     })
                 }
 
@@ -223,7 +229,7 @@ Page {
                     color: Theme.rgba(
                                highlightColorSelect.pressed
                                ? page._originalHighlightColor
-                               : Theme.primaryColor,
+                               : primaryColor,
                                  0.7)
                     font.pixelSize: Theme.fontSizeSmall
                     opacity: 0

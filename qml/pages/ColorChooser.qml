@@ -6,6 +6,7 @@ Dialog {
     id: colorChooser
 
     property color currentColor
+    property color secondaryHightlightColor
 
     DialogHeader {
         id: header
@@ -29,6 +30,7 @@ Dialog {
         }
         onColorSelected: {
             currentColor = col
+            secondaryHightlightColor = Qt.darker(currentColor, 1.25);
         }
     }
 

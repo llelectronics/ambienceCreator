@@ -39,11 +39,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Ringtone volume</source>
+        <source>Ambience Name</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Ambience Name</source>
+        <source>Ringtone volume</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

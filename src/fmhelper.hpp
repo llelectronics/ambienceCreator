@@ -92,6 +92,7 @@ class FM : public QObject
             connect(&watcher, SIGNAL(finished()), this, SLOT(cpFinished()));
             QFuture<bool> future = QtConcurrent::run(this, &FM::cpFile, source, target);
             watcher.setFuture(future);
+            return true;
         }
         bool moveFile(const QString &source, const QString &target)
         {

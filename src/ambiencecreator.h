@@ -93,12 +93,17 @@ private slots:
     bool setAmbienceName()
     {
         if (!replaceText(ambienceTempDir + "/"+ambienceName + ".spec", "ambience-template", "ambience-" + ambienceName)) return false;
+        if (!replaceText(ambienceTempDir + "/sounds.index", "ambience-template", "ambience-" + ambienceName)) return false;
         // Json stuff (key, value)
         if (!replaceJson(ambienceTempDir + "/"+ambienceName + ".ambience", "translationCatalog", "ambience-" + ambienceName)) return false;
         if (!replaceJson(ambienceTempDir + "/"+ambienceName + ".ambience", "displayName", "ambience-" + ambienceName)) return false;
         return true;
     }
-    //bool setColor()
+    bool JsonSetColor(const QString key, const QString col)
+    {
+        if (!replaceJson(ambienceTempDir + "/"+ambienceName + ".ambience", key, col)) return false;
+        return true;
+    }
 
 public slots:
     bool prepareRPM(const QString &ambienceN)
@@ -109,7 +114,18 @@ public slots:
         if (!renameFiles()) return false;
         if (!setAmbienceName()) return false;
     }
+    bool setColor(const QString highlightColor, const QString secondaryHighlightColor, const QString primaryColor, const QString secondaryColor)
+    {
+        if (!JsonSetColor("highlightColor", highlightColor)) return false;
+        if (!JsonSetColor("secondaryHighlightColor", secondaryHighlightColor)) return false;
+        if (!JsonSetColor("primaryColor", primaryColor)) return false;
+        if (!JsonSetColor("secondaryColor", secondaryColor)) return false;
+        return true;
+    }
+    bool setSound(const QString ringerTone, const QString messageTone, const QString chatTone, const QString mailTone, const QString calendarTone, const QString clockAlarmTone)
+    {
 
+    }
 
 
 };

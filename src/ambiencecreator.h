@@ -8,6 +8,7 @@
 #include <QString>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonArray>
 
 #include <QDebug>
 
@@ -17,6 +18,11 @@ class ambienceCreator : public QObject
 private:
     QString ambienceTempDir;
     QString ambienceName;
+    QByteArray fileData;
+    QFile file;
+    QJsonDocument jsonDoc;
+    QJsonObject json;
+
 private slots:
     bool cpFile(const QString &source, const QString &target)
     {
@@ -56,18 +62,27 @@ private slots:
         file.close(); // close the file handle.
         return true;
     }
-    bool replaceJson(const QString &fileName, const QString &key, const QString &value)
+    bool loadJson(const QString &fileName)
     {
-        QByteArray fileData;
-        QFile file(fileName);
-        file.open(stderr, QIODevice::ReadWrite); // open for read and write
+        file.setFileName(fileName);
+        if (!file.open(stderr, QIODevice::ReadWrite)) return false; // open for read and write
         fileData = file.readAll(); // read all the data into the byte array
 
-        QJsonDocument jsonDoc = QJsonDocument::fromJson(fileData);
-        QJsonObject json = jsonDoc.object();
-        json[key] = value;
+        jsonDoc = QJsonDocument::fromJson(fileData); // TODO: Error handling
+        json = jsonDoc.object();
+        return true;
+    }
+    bool writeJson()
+    {
         if (file.write(jsonDoc.toJson()) == -1) return false;
         file.close();
+        return true;
+    }
+    bool replaceJson(const QString &fileName, const QString &key, const QString &value)
+    {
+        if (!loadJson(fileName)) return false;
+        json[key] = value;
+        if (!writeJson()) return false;
         return true;
     }
     bool copyTemplate()
@@ -85,10 +100,18 @@ private slots:
         if (!QFile::rename(ambienceTempDir + "/images/ambience-template.jpg", ambienceTempDir + "/images/ambience-"+ambienceName + ".jpg")) return false;
         return true;
     }
-    bool copySound(const QString &type, const QString &source)
+    bool copySound(const QString &source, const QString &soundName)
     {
-      //Copy source to ambiencTempDir + "/sounds/" + ambienceName + "-" + type
-        cpFile(source,ambienceTempDir + "/sounds/ambience-" + ambienceName + "-" + type);
+        //Copy source to ambiencTempDir + "/sounds/" + ambienceName + "-" + type
+        if (!cpFile(source,ambienceTempDir + "/sounds/" + soundName)) return false;
+        return true;
+    }
+    QString getSoundName(const QString &type, const QString &source)
+    {
+        // Get suffix of source
+        QFileInfo fi(source);
+        QString ext = fi.completeSuffix();  // ext = "flac"
+        return "ambience-" + ambienceName + "-" + type + "." + ext;
     }
     bool setAmbienceName()
     {
@@ -104,6 +127,23 @@ private slots:
         if (!replaceJson(ambienceTempDir + "/"+ambienceName + ".ambience", key, col)) return false;
         return true;
     }
+    bool JsonSetSound(const QString key, const QString sound)
+    {
+        loadJson(ambienceTempDir + "/sounds.index");
+        if (json.contains("files") && json["files"].isArray()) {
+            QJsonArray filesArray = json["files"].toArray();
+            for (int filesIndex = 0; filesIndex < filesArray.size(); ++filesIndex) {
+                QJsonObject filesObject = filesArray[filesIndex].toObject();
+                if (filesObject.contains("displayName")) {
+                    if (filesObject["displayName"] == key) {
+                        filesObject["fileName"] = sound;
+                    }
+                }
+            }
+        }
+        if (!writeJson()) return false;
+        return true;
+    }
 
 public slots:
     bool prepareRPM(const QString &ambienceN)
@@ -113,6 +153,7 @@ public slots:
         if (!copyTemplate()) return false;
         if (!renameFiles()) return false;
         if (!setAmbienceName()) return false;
+        return true;
     }
     bool setColor(const QString highlightColor, const QString secondaryHighlightColor, const QString primaryColor, const QString secondaryColor)
     {
@@ -122,8 +163,38 @@ public slots:
         if (!JsonSetColor("secondaryColor", secondaryColor)) return false;
         return true;
     }
-    bool setSound(const QString ringerTone, const QString messageTone, const QString chatTone, const QString mailTone, const QString calendarTone, const QString clockAlarmTone)
+    bool setSounds(const QString ringerTone, const QString messageTone, const QString chatTone, const QString imTone, const QString mailTone, const QString calendarTone, const QString clockAlarmTone)
     {
+
+        if (!ringerTone.isEmpty()) {
+            if (!copySound(ringerTone,getSoundName("ringtone", ringerTone))) return false;
+            if (!JsonSetSound("ambience-" + ambienceName + "ringtone", getSoundName("ringtone", ringerTone))) return false;
+        }
+        if (!messageTone.isEmpty()) {
+            if (!copySound(messageTone,getSoundName("messagetone", messageTone))) return false;
+            if (!JsonSetSound("ambience-" + ambienceName + "messagetone", getSoundName("messagetone", messageTone))) return false;
+        }
+        if (!chatTone.isEmpty()) {
+            if (!copySound(chatTone,getSoundName("chattone", chatTone))) return false;
+            if (!JsonSetSound("ambience-" + ambienceName + "chattone", getSoundName("chattone", chatTone))) return false;
+        }
+        if (!imTone.isEmpty()) {
+            if (!copySound(imTone,getSoundName("imtone", imTone))) return false;
+            if (!JsonSetSound("ambience-" + ambienceName + "imtone", getSoundName("imtone", imTone))) return false;
+        }
+        if (!mailTone.isEmpty()) {
+            if (!copySound(mailTone,getSoundName("mailtone", mailTone))) return false;
+            if (!JsonSetSound("ambience-" + ambienceName + "mailtone", getSoundName("mailtone", mailTone))) return false;
+        }
+        if (!calendarTone.isEmpty()) {
+            if (!copySound(calendarTone,getSoundName("calendar-alarm", calendarTone))) return false;
+            if (!JsonSetSound("ambience-" + ambienceName + "calendar-alarm", getSoundName("calendar-alarm", calendarTone))) return false;
+        }
+        if (!clockAlarmTone.isEmpty()) {
+            if (!copySound(clockAlarmTone,getSoundName("clock-alarm", clockAlarmTone))) return false;
+            if (!JsonSetSound("ambience-" + ambienceName + "clock-alarm", getSoundName("clock-alarm", clockAlarmTone))) return false;
+        }
+        return true;
 
     }
 
